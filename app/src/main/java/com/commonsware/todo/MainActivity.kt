@@ -1,5 +1,6 @@
 package com.commonsware.todo
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,5 +13,12 @@ class MainActivity : AppCompatActivity() {
 
     toolbar.title = getString(R.string.app_name)
     toolbar.inflateMenu(R.menu.actions)
+    toolbar.setOnMenuItemClickListener { item ->
+      when (item.itemId) {
+        R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
+        else -> return@setOnMenuItemClickListener false
+      }
+      true
+    }
   }
 }
