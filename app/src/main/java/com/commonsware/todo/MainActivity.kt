@@ -1,24 +1,19 @@
 package com.commonsware.todo
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.transaction
 
 class MainActivity : AppCompatActivity() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.todo_roster)
 
-    toolbar.title = getString(R.string.app_name)
-    toolbar.inflateMenu(R.menu.actions)
-    toolbar.setOnMenuItemClickListener { item ->
-      when (item.itemId) {
-        R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
-        else -> return@setOnMenuItemClickListener false
-      }
-      true
+        if (supportFragmentManager.findFragmentById(android.R.id.content) == null) {
+            supportFragmentManager.transaction {
+                add(android.R.id.content, RosterListFragment())
+            }
+        }
     }
-  }
 }
