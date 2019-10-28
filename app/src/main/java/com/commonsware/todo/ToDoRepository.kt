@@ -1,7 +1,7 @@
 package com.commonsware.todo
 
 object ToDoRepository {
-    val items = listOf(
+    var items = listOf(
         ToDoModel(
             description = "Buy a copy of _Exploring Android_",
             isCompleted = true,
@@ -15,4 +15,12 @@ object ToDoRepository {
             notes = "Talk to some people at non-profit organizations to see what they need!"
         )
     )
+
+    fun save(model: ToDoModel) {
+        items = if (items.any { it.id == model.id }) {
+            items.map { if (it.id == model.id) model else it }
+        } else {
+            items + model
+        }
+    }
 }
