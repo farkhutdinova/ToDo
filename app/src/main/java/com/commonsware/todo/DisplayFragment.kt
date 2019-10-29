@@ -1,14 +1,13 @@
 package com.commonsware.todo
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.commonsware.todo.databinding.TodoDisplayBinding
 
-class DisplayFragment: Fragment() {
+class DisplayFragment : Fragment() {
 
     private val args: DisplayFragmentArgs by navArgs()
 
@@ -24,5 +23,30 @@ class DisplayFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.model = ToDoRepository.find(args.modelId)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.actions_display, menu)
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.edit -> {
+                edit(); return true;
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun edit() {
+        findNavController().navigate(DisplayFragmentDirections.editModel(args.modelId))
     }
 }
