@@ -8,8 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.commonsware.todo.databinding.TodoEditBinding
+import org.koin.android.ext.android.inject
 
 class EditFragment : Fragment() {
+
+    private val repo: ToDoRepository by inject()
     private lateinit var binding: TodoEditBinding
     private val args: EditFragmentArgs by navArgs()
 
@@ -22,7 +25,7 @@ class EditFragment : Fragment() {
         .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.model = ToDoRepository.find(args.modelId)
+        binding.model = repo.find(args.modelId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,12 +68,12 @@ class EditFragment : Fragment() {
             )
         }
 
-        edited?.let { ToDoRepository.save(it) }
+        edited?.let { repo.save(it) }
         navToDisplay()
     }
 
     private fun delete() {
-        binding.model?.let { ToDoRepository.delete(it.id) }
+        binding.model?.let { repo.delete(it.id) }
         navToList()
     }
 

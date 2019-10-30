@@ -1,6 +1,6 @@
 package com.commonsware.todo
 
-object ToDoRepository {
+class ToDoRepository {
     var items = listOf<ToDoModel>()
 
     fun save(model: ToDoModel) {
