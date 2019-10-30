@@ -1,19 +1,25 @@
 package com.commonsware.todo.repo
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+
 class ToDoRepository {
-    var items = listOf<ToDoModel>()
+    private val _items = MutableLiveData<List<ToDoModel>>().apply { value = listOf() }
+    val items: LiveData<List<ToDoModel>> = _items
 
     fun save(model: ToDoModel) {
-        items = if (items.any { it.id == model.id }) {
-            items.map { if (it.id == model.id) model else it }
+        _items.value = if (current().any { it.id == model.id }) {
+            current().map { if (it.id == model.id) model else it }
         } else {
-            items + model
+            current() + model
         }
     }
 
-    fun find(modelId: String?) = items.find { it.id == modelId }
+    fun find(modelId: String?) = current().find { it.id == modelId }
 
     fun delete(modelId: String) {
-        items = items.filter { it.id != modelId }
+        _items.value = current().filter { it.id != modelId }
     }
+
+    private fun current() = _items.value!!
 }

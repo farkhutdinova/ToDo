@@ -3,6 +3,7 @@ package com.commonsware.todo.ui.roster
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,8 +36,10 @@ class RosterListFragment : Fragment() {
                 )
             )
         }
-        adapter.submitList(motor.getItems())
-        empty.visibility = if (motor.getItems().isEmpty()) View.VISIBLE else View.GONE
+        motor.items.observe(this, Observer { items ->
+            adapter.submitList(items)
+            empty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+        })
     }
 
     override fun onCreateView(
