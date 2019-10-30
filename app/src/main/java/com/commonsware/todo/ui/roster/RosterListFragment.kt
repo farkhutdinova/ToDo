@@ -8,14 +8,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.commonsware.todo.R
 import com.commonsware.todo.repo.ToDoModel
-import com.commonsware.todo.repo.ToDoRepository
 import kotlinx.android.synthetic.main.todo_roster.*
 import kotlinx.android.synthetic.main.todo_roster.view.*
 import org.koin.android.ext.android.inject
 
 class RosterListFragment : Fragment() {
 
-    private val repo: ToDoRepository by inject()
+    private val motor: RosterMotor by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -23,7 +22,7 @@ class RosterListFragment : Fragment() {
         val adapter = RosterAdapter(
             inflater = layoutInflater,
             onCheckboxToggle = { model ->
-                repo.save(model.copy(isCompleted = !model.isCompleted))
+                motor.save(model.copy(isCompleted = !model.isCompleted))
             },
             onRowClick = { model -> display(model) })
         view.items.apply {
@@ -36,8 +35,8 @@ class RosterListFragment : Fragment() {
                 )
             )
         }
-        adapter.submitList(repo.items)
-        empty.visibility = if (repo.items.isEmpty()) View.VISIBLE else View.GONE
+        adapter.submitList(motor.getItems())
+        empty.visibility = if (motor.getItems().isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun onCreateView(
