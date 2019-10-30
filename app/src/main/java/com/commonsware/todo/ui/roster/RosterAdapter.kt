@@ -1,10 +1,11 @@
-package com.commonsware.todo
+package com.commonsware.todo.ui.roster
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.commonsware.todo.databinding.TodoRowBinding
+import com.commonsware.todo.repo.ToDoModel
 
 class RosterAdapter(
     private val inflater: LayoutInflater,
