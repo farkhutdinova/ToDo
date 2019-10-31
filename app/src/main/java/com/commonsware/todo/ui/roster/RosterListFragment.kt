@@ -36,9 +36,9 @@ class RosterListFragment : Fragment() {
                 )
             )
         }
-        motor.items.observe(this, Observer { items ->
-            adapter.submitList(items)
-            empty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+        motor.states.observe(this, Observer { state ->
+            adapter.submitList(state.items)
+            empty.visibility = if (state.items.isEmpty()) View.VISIBLE else View.GONE
         })
     }
 
