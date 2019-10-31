@@ -2,6 +2,7 @@ package com.commonsware.todo.repo
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 
 class ToDoRepository {
     private val _items = MutableLiveData<List<ToDoModel>>().apply { value = listOf() }
@@ -15,10 +16,13 @@ class ToDoRepository {
         }
     }
 
-    fun find(modelId: String?) = current().find { it.id == modelId }
+    fun find(modelId: String?): LiveData<ToDoModel> =
+        Transformations.map(items) {
+            it.find { model -> model.id == modelId }
+        }
 
-    fun delete(modelId: String) {
-        _items.value = current().filter { it.id != modelId }
+    fun delete(model: ToDoModel) {
+        _items.value = current().filter { it.id != model.id }
     }
 
     private fun current() = _items.value!!
