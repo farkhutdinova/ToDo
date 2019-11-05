@@ -32,4 +32,5 @@ task clean(type: Delete) {
 
 ext {
     koin_version = "1.0.2"
+    room_version = "2.2.1"
 }
