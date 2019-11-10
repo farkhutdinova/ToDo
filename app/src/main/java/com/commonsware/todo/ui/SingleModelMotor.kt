@@ -1,9 +1,6 @@
 package com.commonsware.todo.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.commonsware.todo.repo.ToDoModel
 import com.commonsware.todo.repo.ToDoRepository
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +15,9 @@ class SingleModelMotor(
     private val uiContext: CoroutineContext = Dispatchers.Main
 ) : ViewModel() {
     val states: LiveData<SingleModelViewState> =
-        Transformations.map(repo.find(modelId)) { SingleModelViewState(it) }
+        modelId?.let { Transformations.map(repo.find(modelId)) { SingleModelViewState(it) } }
+            ?: MutableLiveData<SingleModelViewState>().apply { value = SingleModelViewState(null) };
+
 
     fun save(model: ToDoModel) {
         viewModelScope.launch(uiContext) {

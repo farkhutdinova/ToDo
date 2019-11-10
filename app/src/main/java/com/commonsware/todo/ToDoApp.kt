@@ -13,7 +13,10 @@ import org.koin.dsl.module.module
 class ToDoApp : Application() {
 
     private val koinModule = module {
-        single { ToDoRepository() }
+        single {
+            val db: ToDoDatabase = get()
+            ToDoRepository(db.todoStore())
+        }
         single { ToDoDatabase.newInstance(androidContext()) }
         viewModel { RosterMotor(get()) }
         viewModel { (modelId: String) -> SingleModelMotor(get(), modelId) }
