@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.commonsware.todo.R
+import com.commonsware.todo.repo.FilterMode
 import com.commonsware.todo.repo.ToDoModel
 import kotlinx.android.synthetic.main.todo_roster.*
 import kotlinx.android.synthetic.main.todo_roster.view.*
@@ -38,7 +39,17 @@ class RosterListFragment : Fragment() {
         }
         motor.states.observe(this, Observer { state ->
             adapter.submitList(state.items)
-            empty.visibility = if (state.items.isEmpty()) View.VISIBLE else View.GONE
+            when {
+                state.items.isEmpty() && state.filterMode == FilterMode.ALL -> {
+                    empty.visibility = View.VISIBLE
+                    empty.setText(R.string.msg_empty)
+                }
+                state.items.isEmpty() -> {
+                    empty.visibility = View.VISIBLE
+                    empty.setText(R.string.msg_empty_filtered)
+                }
+                else -> empty.visibility = View.GONE
+            }
             loading.visibility = View.GONE
         })
     }
@@ -59,10 +70,26 @@ class RosterListFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.add -> {
-                add(); return true;
+                add()
+                return true
+            }
+            R.id.all -> {
+                item.isChecked = true
+                motor.load(FilterMode.ALL)
+                return true
+            }
+            R.id.completed -> {
+                item.isChecked = true
+                motor.load(FilterMode.COMPLETED)
+                return true
+            }
+            R.id.outstanding -> {
+                item.isChecked = true
+                motor.load(FilterMode.OUTSTANDING)
+                return true
             }
         }
 

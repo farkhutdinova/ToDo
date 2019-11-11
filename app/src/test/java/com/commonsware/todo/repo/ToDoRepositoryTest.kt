@@ -30,11 +30,11 @@ class ToDoRepositoryTest {
         val testModel = ToDoModel("test model")
 
         underTest.apply {
-            items.test().value().shouldBeEmpty()
+            items().test().value().shouldBeEmpty()
 
             runBlocking { save(testModel) }
 
-            items.test().value() shouldContainSame listOf(testModel)
+            items().test().value() shouldContainSame listOf(testModel)
 
             find(testModel.id).test().value() shouldEqual testModel
         }
@@ -46,15 +46,15 @@ class ToDoRepositoryTest {
         val replacement = testModel.copy(notes = "some changes")
 
         underTest.apply {
-            items.test().value().shouldBeEmpty()
+            items().test().value().shouldBeEmpty()
 
             runBlocking { save(testModel) }
 
-            items.test().value() shouldContainSame listOf(testModel)
+            items().test().value() shouldContainSame listOf(testModel)
 
             runBlocking { save(replacement) }
 
-            items.test().value() shouldContainSame listOf(replacement)
+            items().test().value() shouldContainSame listOf(replacement)
         }
     }
 
@@ -63,15 +63,15 @@ class ToDoRepositoryTest {
         val testModel = ToDoModel("test model")
 
         underTest.apply {
-            items.test().value().shouldBeEmpty()
+            items().test().value().shouldBeEmpty()
 
             runBlocking { save(testModel) }
 
-            items.test().value() shouldContainSame listOf(testModel)
+            items().test().value() shouldContainSame listOf(testModel)
 
             runBlocking { delete(testModel) }
 
-            items.test().value().shouldBeEmpty()
+            items().test().value().shouldBeEmpty()
         }
     }
 }
@@ -102,6 +102,10 @@ class TestStore : ToDoEntity.Store {
         Transformations.map(_items) {
             it.find { model -> model.id == modelId }
         }
+
+    override fun filtered(isCompleted: Boolean): LiveData<List<ToDoEntity>> =
+        MutableLiveData<List<ToDoEntity>>()
+            .apply { value = current().filter { it.isCompleted == isCompleted } }
 
     private fun current() = _items.value!!
 }
