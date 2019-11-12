@@ -17,6 +17,7 @@ import org.koin.android.ext.android.inject
 class RosterListFragment : Fragment() {
 
     private val motor: RosterMotor by inject()
+    private val menuMap = mutableMapOf<FilterMode, MenuItem>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,6 +52,7 @@ class RosterListFragment : Fragment() {
                 else -> empty.visibility = View.GONE
             }
             loading.visibility = View.GONE
+            menuMap[state.filterMode]?.isChecked = true
         })
     }
 
@@ -65,8 +67,17 @@ class RosterListFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.actions_roster, menu)
+
+        menuMap.apply {
+            put(FilterMode.ALL, menu.findItem(R.id.all))
+            put(FilterMode.COMPLETED, menu.findItem(R.id.completed))
+            put(FilterMode.OUTSTANDING, menu.findItem(R.id.outstanding))
+        }
+
+        motor.states.value?.let { menuMap[it.filterMode]?.isChecked = true }
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
