@@ -1,9 +1,12 @@
 package com.commonsware.todo.ui.roster
 
+import android.net.Uri
 import androidx.lifecycle.*
 import com.commonsware.todo.repo.FilterMode
 import com.commonsware.todo.repo.ToDoModel
 import com.commonsware.todo.repo.ToDoRepository
+import com.commonsware.todo.report.RosterReport
+import com.commonsware.todo.ui.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -12,10 +15,12 @@ class RosterViewState(
     val filterMode: FilterMode = FilterMode.ALL
 )
 
-class RosterMotor(private val repo: ToDoRepository) : ViewModel() {
+class RosterMotor(private val repo: ToDoRepository, private val report: RosterReport) : ViewModel() {
     private val _states = MediatorLiveData<RosterViewState>()
     val states: LiveData<RosterViewState> = _states
     private var lastSource: LiveData<List<ToDoModel>>? = null
+    private val _navEvents = MutableLiveData<Event<Nav>>()
+    val navEvents: LiveData<Event<Nav>> = _navEvents
 
     init {
         load(FilterMode.ALL)
@@ -38,4 +43,15 @@ class RosterMotor(private val repo: ToDoRepository) : ViewModel() {
             repo.save(model)
         }
     }
+
+    fun saveReport(doc: Uri) {
+        viewModelScope.launch(Dispatchers.Main) {
+            _states.value?.let { report.generate(it.items, doc) }
+            _navEvents.postValue(Event(Nav.ViewReport(doc)))
+        }
+    }
+}
+
+sealed class Nav {
+    data class ViewReport(val doc: Uri) : Nav()
 }

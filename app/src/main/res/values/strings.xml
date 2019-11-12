@@ -14,4 +14,12 @@
   <string name="menu_filter_all">All</string>
   <string name="menu_filter_completed">Completed</string>
   <string name="menu_filter_outstanding">Outstanding</string>
+  <string name="report_template"><![CDATA[<h1>To-Do Items</h1>
+{{#this}}
+<h2>{{description}}</h2>
+<p>{{#isCompleted}}<b>COMPLETED</b> &mdash; {{/isCompleted}}Created on: {{dateFormat createdOn}}</p>
+<p>{{notes}}</p>
+{{/this}}
+]]></string>
+  <string name="msg_saved">Your Web page is saved!</string>
 </resources>

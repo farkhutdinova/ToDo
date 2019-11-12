@@ -1,7 +1,12 @@
 package com.commonsware.todo.ui.roster
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -10,9 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.commonsware.todo.R
 import com.commonsware.todo.repo.FilterMode
 import com.commonsware.todo.repo.ToDoModel
+import com.commonsware.todo.ui.util.EventObserver
 import kotlinx.android.synthetic.main.todo_roster.*
 import kotlinx.android.synthetic.main.todo_roster.view.*
 import org.koin.android.ext.android.inject
+
+private const val REQUEST_SAVE = 1337
 
 class RosterListFragment : Fragment() {
 
@@ -54,6 +62,18 @@ class RosterListFragment : Fragment() {
             loading.visibility = View.GONE
             menuMap[state.filterMode]?.isChecked = true
         })
+
+        motor.navEvents.observe(this, EventObserver { nav ->
+            when(nav) {
+                is Nav.ViewReport -> viewReport(nav.doc)
+            }
+        })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_SAVE && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { motor.saveReport(it) }
+        }
     }
 
     override fun onCreateView(
@@ -102,6 +122,10 @@ class RosterListFragment : Fragment() {
                 motor.load(FilterMode.OUTSTANDING)
                 return true
             }
+            R.id.save -> {
+                saveReport()
+                return true
+            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -117,5 +141,22 @@ class RosterListFragment : Fragment() {
 
     private fun add() {
         findNavController().navigate(RosterListFragmentDirections.createModel())
+    }
+
+    private fun saveReport() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("text/html")
+        startActivityForResult(intent, REQUEST_SAVE)
+    }
+
+    private fun viewReport(uri: Uri) {
+        val i = Intent(Intent.ACTION_VIEW, uri).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+        try {
+            startActivity(i)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(activity, R.string.msg_saved, Toast.LENGTH_LONG).show()
+        }
     }
 }
