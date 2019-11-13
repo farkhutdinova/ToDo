@@ -64,8 +64,9 @@ class RosterListFragment : Fragment() {
         })
 
         motor.navEvents.observe(this, EventObserver { nav ->
-            when(nav) {
+            when (nav) {
                 is Nav.ViewReport -> viewReport(nav.doc)
+                is Nav.ShareReport -> shareReport(nav.doc)
             }
         })
     }
@@ -126,6 +127,10 @@ class RosterListFragment : Fragment() {
                 saveReport()
                 return true
             }
+            R.id.share -> {
+                motor.shareReport()
+                return true
+            }
         }
 
         return super.onOptionsItemSelected(item)
@@ -157,6 +162,19 @@ class RosterListFragment : Fragment() {
             startActivity(i)
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(activity, R.string.msg_saved, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun shareReport(doc: Uri) {
+        val i = Intent(Intent.ACTION_SEND)
+            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .setType("text/html")
+            .putExtra(Intent.EXTRA_STREAM, doc)
+        try {
+            startActivity(i)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(activity, R.string.msg_share_fail, Toast.LENGTH_LONG)
+                .show()
         }
     }
 }

@@ -35,7 +35,7 @@ class ToDoApp : Application() {
             }
         }
         single { RosterReport(androidContext(), get()) }
-        viewModel { RosterMotor(get(), get()) }
+        viewModel { RosterMotor(get(), get(), get()) }
         viewModel { (modelId: String) -> SingleModelMotor(get(), modelId) }
     }
 
