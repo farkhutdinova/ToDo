@@ -35,11 +35,15 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp() =
         navigateUp(findNavController(R.id.nav_host), appBarConfiguration)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.about) {
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.about -> {
             startActivity(Intent(this, AboutActivity::class.java))
-            return true
+            true
         }
-        return super.onOptionsItemSelected(item)
+        R.id.settings -> {
+            findNavController(R.id.nav_host).navigate(R.id.editPrefs)
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 }
