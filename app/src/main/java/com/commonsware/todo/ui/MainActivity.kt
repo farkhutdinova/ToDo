@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
         R.id.settings -> {
-            findNavController(R.id.nav_host).navigate(R.id.editPrefs)
+            findNavController(R.id.nav_host).navigate(R.id.prefsFragment)
             true
         }
         else -> super.onOptionsItemSelected(item)
