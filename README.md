@@ -1,2 +1,2 @@
 # ToDo
-The app for managing to-do list
+The Android app for managing to-do list
